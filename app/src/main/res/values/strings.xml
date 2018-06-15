@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">updateAPK</string>
+    <string name="server">APK Url</string>
+    <string name="exit">Exit</string>
+    <string name="wmsbuttonlabel">Обновить приложение из хранилища</string>
 </resources>

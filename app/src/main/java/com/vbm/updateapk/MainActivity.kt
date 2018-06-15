@@ -1,54 +1,77 @@
 package com.vbm.updateapk
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.system.exitProcess
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
-
-    override fun onClick(p0: View) {
-        var url: String
-
-
-        url = ""
-
-        if (p0.id == R.id.buttonWMS)
-            url = Globals.AXELOTURL
-
-        /* if (p0.id == R.id.buttonZEBRA)
-             url = Globals.ZEBRAURL;*/
-
-        if (url.equals("")) {
-            Toast.makeText(this, "No url founded!", Toast.LENGTH_SHORT).show()
-            return;
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item == null) return false
+        when (item.itemId) {
+            R.id.server -> raiseSettingsActivity(Globals.SettingsItem.SERVER)
+            R.id.exit -> exitProcess(0)
         }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.mainmenu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onClick(p0: View?) {
+        val url: String
+        url = Globals.AXELOTURL
 
         var updateApp: UpdateApp
         updateApp = UpdateApp(this)
+        updateApp.execute(url)
 
         progressBar2.visibility = ProgressBar.VISIBLE
         buttonWMS.isEnabled = false
-        updateApp.execute(url)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         progress(false)
         buttonWMS.setOnClickListener(this)
-        //buttonZEBRA.setOnClickListener(this)
         Globals.requestAppPermissions(this)
+        val builder = StrictMode.VmPolicy.Builder()
+        StrictMode.setVmPolicy(builder.build())
     }
 
     fun progress(action: Boolean) {
-        if( action )
-           progressBar2.progress++
+        if (action)
+            progressBar2.progress++
         else {
-            progressBar2.visibility = ProgressBar.INVISIBLE;
+            progressBar2.visibility = ProgressBar.INVISIBLE
             buttonWMS.isEnabled = true
+        }
+    }
+
+    fun exceptmsg(str: String) {
+        Toast.makeText(this, str + "\n" + "Свяжитесь с системным администратором", Toast.LENGTH_LONG).show()
+        buttonWMS.isEnabled = true
+        progressBar2.visibility = ProgressBar.INVISIBLE
+    }
+
+    fun raiseSettingsActivity(settingsType: Globals.SettingsItem) = when (settingsType) {
+        Globals.SettingsItem.SERVER -> {
+            val intent: Intent
+            intent = Intent(this.applicationContext, SettingsActivity::class.java)
+            intent.putExtra(Globals.SETTINGSKEY, Globals.SERVERVALUE)
+            startActivity(intent);
         }
     }
 

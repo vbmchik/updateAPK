@@ -62,8 +62,15 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
 
 
         } catch (Exception e) {
+            final String k = e.getLocalizedMessage();
             Log.e("UpdateAPP", "Update error! " + e.getMessage());
-            //Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            ((MainActivity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity) context).exceptmsg(k);
+                }
+            });
+
         }
         return null;
     }
