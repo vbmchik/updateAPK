@@ -23,7 +23,13 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
     @Override
     protected Void doInBackground(String... arg0) {
         try {
-            URL url = new URL(arg0[0]);
+            if (arg0.length == 0) throw new Exception("No URL");
+            URL url;
+            if (arg0.length == 1)
+                url = new URL(arg0[0]);
+            else
+                url = new URL(arg0[1]);
+
             HttpURLConnection c = (HttpURLConnection) url.openConnection();
             c.setRequestMethod("GET");
             c.setDoOutput(true);
@@ -41,13 +47,31 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
 
             InputStream is = c.getInputStream();
 
-            byte[] buffer = new byte[1024];
+            final byte[] buffer = new byte[1024];
             int len1 = 0;
             while ((len1 = is.read(buffer)) != -1) {
                 fos.write(buffer, 0, len1);
             }
+
             fos.close();
             is.close();
+
+            if (arg0.length > 1) {
+                ((SettingsActivity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Globals.AXELOTURL = new String(buffer);
+                        ((SettingsActivity) context).repoUpdate(Globals.AXELOTURL);
+                    }
+                });
+
+                return null;
+            }
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(outputFile), "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // without this flag android returned a intent error!
+            context.startActivity(intent);
 
            ((MainActivity)context).runOnUiThread(new Runnable() {
                 @Override
@@ -55,10 +79,6 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
                     ((MainActivity)context).progress(false);
                 }
             });
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(outputFile), "application/vnd.android.package-archive");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // without this flag android returned a intent error!
-            context.startActivity(intent);
 
 
         } catch (Exception e) {
