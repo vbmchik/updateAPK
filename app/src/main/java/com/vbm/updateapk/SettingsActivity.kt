@@ -1,12 +1,11 @@
 package com.vbm.updateapk
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_settings.*
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : MyAppCompatActivity() {
 
-    private lateinit var key: String;
+    private lateinit var key: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +45,7 @@ class SettingsActivity : AppCompatActivity() {
         readbutton.setOnClickListener {
             run {
                 if (editText2.text.length != 0) {
-                    val updateApp: UpdateApp = UpdateApp(this);
+                    val updateApp = UpdateApp(this)
                     updateApp.execute("repo", editText2.text.toString())
                 }
 

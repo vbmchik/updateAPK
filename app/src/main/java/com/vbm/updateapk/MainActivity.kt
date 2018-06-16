@@ -3,23 +3,22 @@ package com.vbm.updateapk
 import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.system.exitProcess
 
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
+class MainActivity : MyAppCompatActivity(), View.OnClickListener {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item == null) return false
         when (item.itemId) {
             R.id.server -> raiseSettingsActivity(Globals.SettingsItem.SERVER)
             R.id.exit -> exitProcess(0)
         }
+
         return super.onOptionsItemSelected(item)
     }
 
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val url: String
         url = Globals.AXELOTURL
 
-        var updateApp: UpdateApp
+        val updateApp: UpdateApp
         updateApp = UpdateApp(this)
         updateApp.execute(url)
 
@@ -51,6 +50,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         StrictMode.setVmPolicy(builder.build())
     }
 
+
     fun progress(action: Boolean) {
         if (action)
             progressBar2.progress++
@@ -60,18 +60,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    fun exceptmsg(str: String) {
-        Toast.makeText(this, str + "\n" + "Свяжитесь с системным администратором", Toast.LENGTH_LONG).show()
-        buttonWMS.isEnabled = true
-        progressBar2.visibility = ProgressBar.INVISIBLE
-    }
-
     fun raiseSettingsActivity(settingsType: Globals.SettingsItem) = when (settingsType) {
         Globals.SettingsItem.SERVER -> {
             val intent: Intent
             intent = Intent(this.applicationContext, SettingsActivity::class.java)
             intent.putExtra(Globals.SETTINGSKEY, Globals.SERVERVALUE)
-            startActivity(intent);
+            startActivity(intent)
         }
     }
 

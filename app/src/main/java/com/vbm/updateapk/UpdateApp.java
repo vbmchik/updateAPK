@@ -1,6 +1,5 @@
 package com.vbm.updateapk;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,9 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class UpdateApp extends AsyncTask<String,Void,Void> {
-    private Context context;
+    private final MyAppCompatActivity context;
 
-    public UpdateApp( Context context ){
+    public UpdateApp(MyAppCompatActivity context) {
         this.context = context;
     }
 
@@ -33,6 +32,9 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
             HttpURLConnection c = (HttpURLConnection) url.openConnection();
             c.setRequestMethod("GET");
             c.setDoOutput(true);
+            c.setConnectTimeout(100);
+            c.setReadTimeout(15000);
+            //c.setRequestMethod("HEAD");
             c.connect();
 
             //String PATH = ((MainActivity)context).getFilesDir().getPath();
@@ -57,7 +59,7 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
             is.close();
 
             if (arg0.length > 1) {
-                ((SettingsActivity) context).runOnUiThread(new Runnable() {
+                context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Globals.AXELOTURL = new String(buffer);
@@ -73,21 +75,28 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // without this flag android returned a intent error!
             context.startActivity(intent);
 
-           ((MainActivity)context).runOnUiThread(new Runnable() {
+            context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     ((MainActivity)context).progress(false);
                 }
             });
 
-
-        } catch (Exception e) {
-            final String k = e.getLocalizedMessage();
-            Log.e("UpdateAPP", "Update error! " + e.getMessage());
-            ((MainActivity) context).runOnUiThread(new Runnable() {
+        } catch (java.net.SocketTimeoutException e) {
+            context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((MainActivity) context).exceptmsg(k);
+                    context.exceptmsg("Время ожидания истекло..\nПроверьте подключение к сети");
+                }
+            });
+        } catch (Exception e) {
+
+            final String k = (e.getMessage() == null) ? e.getCause().toString() : e.getMessage();
+            Log.e("UpdateAPP", "Update error! " + e.getMessage());
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    context.exceptmsg(k);
                 }
             });
 
