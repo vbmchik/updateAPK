@@ -33,6 +33,9 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
             HttpURLConnection c = (HttpURLConnection) url.openConnection();
             c.setRequestMethod("GET");
             c.setDoOutput(true);
+            c.setConnectTimeout(100);
+            c.setReadTimeout(15000);
+            //c.setRequestMethod("HEAD");
             c.connect();
 
             //String PATH = ((MainActivity)context).getFilesDir().getPath();
@@ -82,7 +85,7 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
 
 
         } catch (Exception e) {
-            final String k = e.toString();
+            final String k = e.getLocalizedMessage();
             Log.e("UpdateAPP", "Update error! " + e.getMessage());
             ((MainActivity) context).runOnUiThread(new Runnable() {
                 @Override
