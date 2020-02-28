@@ -19,10 +19,10 @@ public final class Globals {
 
     //public static final String ZEBRAURL = "http://192.168.0.199/1/1.apk";
     public static final String SETTINGSKEY = "SETINGSKEY";
-    public static String AXELOTURL = "http://192.168.0.199/1/AxelotMobileClient.apk";
+    public static String AXELOTURL = "http://192.168.0.37/1/AxelotMobileClient.apk";
     public static final String CHOICETAG = "CHOICETAG";
     public static final String REPOTAG = "REPOTAG";
-    public static String REPOURL = "http://192.168.0.199/1/config.upd";
+    public static String REPOURL = "http://192.168.0.37/1/config.upd";
 
     static String readFromSettings(Context context, String key) {
         String s = "";
@@ -59,7 +59,7 @@ public final class Globals {
         //return success;
     }
 
-    public static enum SettingsItem {
+    public enum SettingsItem {
         SERVER
     }
 }

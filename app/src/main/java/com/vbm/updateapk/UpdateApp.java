@@ -82,7 +82,7 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
 
 
         } catch (Exception e) {
-            final String k = e.getLocalizedMessage();
+            final String k = e.toString();
             Log.e("UpdateAPP", "Update error! " + e.getMessage());
             ((MainActivity) context).runOnUiThread(new Runnable() {
                 @Override
